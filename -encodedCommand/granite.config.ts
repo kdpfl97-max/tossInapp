@@ -1,20 +1,17 @@
-import { defineConfig } from "@apps-in-toss/web-framework/config";
+import { appsInToss } from '@apps-in-toss/framework/plugins';
+import { defineConfig } from '@granite-js/react-native/config';
 
 export default defineConfig({
-  appName: "-encodedCommand",
-  brand: {
-    displayName: "앱 이름", // 화면에 노출될 앱의 한글 이름으로 바꿔주세요.
-    primaryColor: "#D7B59E", // 화면에 노출될 앱의 기본 색상으로 바꿔주세요.
-    icon: "", // 화면에 노출될 앱의 아이콘 이미지 주소로 바꿔주세요.
-  },
-  web: {
-    host: "localhost",
-    port: 5173,
-    commands: {
-      dev: "vite dev",
-      build: "vite build",
-    },
-  },
-  permissions: [],
-  outdir: "dist",
+  scheme: 'intoss',
+  appName: 'lucky-catch',
+  plugins: [
+    appsInToss({
+      brand: {
+        displayName: 'lucky-catch', // 화면에 노출될 앱의 한글 이름으로 바꿔주세요.
+        primaryColor: '#3182F6', // 화면에 노출될 앱의 기본 색상으로 바꿔주세요.
+        icon: "https://static.toss.im/appsintoss/40719/94b54110-41c2-4115-8216-820a4d17312e.png", // 화면에 노출될 앱의 아이콘 이미지 주소로 바꿔주세요.
+      },
+      permissions: [],
+    }),
+  ],
 });

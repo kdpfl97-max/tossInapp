@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@apps-in-toss/framework": "^2.4.7"
+  },
+  "scripts": {
+    "dev": "granite dev",
+    "build": "ait build",
+    "deploy": "ait deploy"
+  }
+}
