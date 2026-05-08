@@ -18,8 +18,11 @@
     "@toss/tds-colors": "^0.1.0",
     "@toss/tds-mobile": "^2.3.0",
     "@toss/tds-mobile-ait": "^2.3.0",
+    "@toss/tds-react-native": "^2.0.3",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "react-native": "^0.85.3",
+    "sass": "^1.99.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
