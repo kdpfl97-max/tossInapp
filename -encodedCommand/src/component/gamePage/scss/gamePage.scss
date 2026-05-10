@@ -1,0 +1,201 @@
+.gp-container {
+  height: 100vh;
+  min-height: 812px;
+  max-width: 375px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--token-tds-color-white, var(--adaptiveBackground, #ffffff));
+  overflow: hidden;
+}
+
+.gp-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  height: 44px;
+}
+
+.gp-nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  padding: 10px;
+  font-size: 20px;
+  color: var(--token-tds-color-grey-900, #191919);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gp-nav-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  border-radius: 99px;
+  padding: 0 10px;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--token-tds-color-grey-900, #191919);
+}
+
+.gp-nav-actions {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  border-radius: 99px;
+  background-color: var(
+    --token-tds-color-grey-opacity-50,
+    var(--adaptiveGreyOpacity50, rgba(0, 23, 51, 0.02))
+  );
+  overflow: hidden;
+}
+
+.gp-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 96px;
+}
+
+.gp-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 20px;
+  margin-top: 8px;
+}
+
+.gp-stat {
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gp-stat-label {
+  font-size: 12px;
+  color: var(--token-tds-color-grey-700, #6b6b6b);
+}
+
+.gp-stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--token-tds-color-grey-900, #191919);
+  letter-spacing: -0.2px;
+}
+
+.gp-stat-divider {
+  width: 1px;
+  height: 28px;
+  background-color: var(
+    --token-tds-color-grey-opacity-200,
+    var(--adaptiveGreyOpacity200, rgba(0, 27, 55, 0.1))
+  );
+}
+
+.gp-cat-button {
+  margin-top: 18px;
+  margin-left: auto;
+  margin-right: auto;
+  // 인게임-시작 Frame(424x631) 비율 고정
+  width: min(344px, 92vw);
+  aspect-ratio: 424 / 631;
+  // 화면이 낮은 환경에서 CTA 영역과 겹치지 않도록 상한만 둠
+  max-height: calc(100vh - 44px - 96px - 64px);
+  border: none;
+  background: transparent;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gp-cat-button:active .gp-cat-image {
+  transform: scale(0.99);
+}
+
+.gp-cat-button:disabled {
+  cursor: default;
+}
+
+.gp-cat-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  // 좌우 반전은 즉시(애니메이션 없음)
+  transition: none;
+  user-select: none;
+  pointer-events: none;
+}
+
+.gp-cat-image--flipped {
+  transform: scaleX(-1);
+}
+
+@keyframes gpTapScale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.975);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.gp-cat-button--tapping {
+  animation: gpTapScale 140ms ease-out both;
+}
+
+.gp-cat-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+}
+
+.gp-bottom {
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  bottom: 24px;
+  width: min(375px, 100%);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0 20px;
+}
+
+.gp-primary {
+  width: 100%;
+  height: 56px;
+  background-color: #3182f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  letter-spacing: -0.3px;
+}
+
+.gp-primary:hover {
+  background-color: #1c6ef2;
+}
+
+.gp-primary:active {
+  background-color: #1661d8;
+  transform: scale(0.99);
+}
+

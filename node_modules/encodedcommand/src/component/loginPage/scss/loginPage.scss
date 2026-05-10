@@ -1,0 +1,196 @@
+.lp-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f5f5f5;
+  position: relative;
+  overflow: hidden;
+
+  .lp-bell {
+    font-size: 40px;
+    margin-top: 32px;
+    align-self: flex-start;
+    padding: 0 20px;
+  }
+
+  .lp-title-box {
+    align-self: flex-start;
+    padding: 0 20px;
+    margin-top: 16px;
+
+    .lp-subtitle {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .lp-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #191919;
+      line-height: 1.35;
+      white-space: pre-line;
+      letter-spacing: -0.5px;
+    }
+  }
+
+  .lp-img {
+    width: 80%;
+    max-width: 320px;
+    object-fit: contain;
+    margin-top: 24px;
+  }
+
+  .lp-btn-box {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 24px;
+    width: 100%;
+    padding: 0 15px;
+
+    .lp-next-btn {
+      width: 100%;
+      height: 56px;
+      background-color: #3182F6;
+      color: #ffffff;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+      letter-spacing: -0.3px;
+
+      &:hover {
+        background-color: #1c6ef2;
+      }
+
+      &:active {
+        background-color: #1661d8;
+        transform: scale(0.99);
+      }
+    }
+  }
+
+  // 바텀시트 오버레이
+  .lp-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 10;
+  }
+
+  // 바텀시트
+  .lp-bottomsheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border-radius: 20px 20px 0 0;
+    z-index: 11;
+    padding: 28px 20px 0;
+    animation: slideUp 0.25s ease;
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .lp-sheet-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      .lp-sheet-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #191919;
+        line-height: 1.4;
+        white-space: pre-line;
+        letter-spacing: -0.3px;
+      }
+
+      .lp-consent-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+
+        .lp-group-label {
+          font-size: 12px;
+          color: #aaa;
+          font-weight: 500;
+        }
+
+        .lp-consent-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .lp-check {
+            color: #3182F6;
+            font-size: 14px;
+            font-weight: 700;
+          }
+
+          .lp-consent-text {
+            flex: 1;
+            font-size: 14px;
+            color: #191919;
+          }
+
+          .lp-arrow {
+            color: #ccc;
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    .lp-sheet-btn-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px 0 32px;
+
+      .lp-agree-btn {
+        width: 100%;
+        height: 56px;
+        background-color: #3182F6;
+        color: #ffffff;
+        border: none;
+        border-radius: 14px;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+        letter-spacing: -0.3px;
+
+        &:hover {
+          background-color: #1c6ef2;
+        }
+
+        &:active {
+          background-color: #1661d8;
+          transform: scale(0.99);
+        }
+      }
+
+      .lp-later-btn {
+        background: none;
+        border: none;
+        font-size: 14px;
+        color: #888;
+        cursor: pointer;
+        padding: 4px 8px;
+
+        &:hover {
+          color: #555;
+        }
+      }
+    }
+  }
+}
