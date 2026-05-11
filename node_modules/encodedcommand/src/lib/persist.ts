@@ -1,13 +1,18 @@
-// src/lib/persist.ts
+import { getSavedAccountKey } from "./authApi";
 
-export function getAccountStorageKey(key: string) {
-    return `account_${key}`;
+/**
+ * 로그인된 유저의 accountKey를 반환
+ * 없으면 guest 키 반환
+ */
+export async function getAccountStorageKey(): Promise<string> {
+  const key = getSavedAccountKey();
+  return key ?? "guest";
 }
 
-export function persistGetNumber(key: string): number {
-    return Number(localStorage.getItem(key) ?? 0);
+export async function persistGetNumber(key: string): Promise<number> {
+  return Number(localStorage.getItem(key) ?? 0);
 }
 
-export function persistSetNumber(key: string, value: number) {
-    localStorage.setItem(key, String(value));
+export async function persistSetNumber(key: string, value: number): Promise<void> {
+  localStorage.setItem(key, String(value));
 }

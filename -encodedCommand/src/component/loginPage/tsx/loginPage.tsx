@@ -2,6 +2,7 @@ import { Button } from "@toss/tds-mobile";
 import '../scss/loginPage.scss';
 import { useState } from "react";
 import cashCatImage from "../../../img/cashCat.png";
+import { loginWithToss, saveAuthToken } from "../../../lib/authApi";
 
 interface LoginPageProps {
     onNext?: () => void;
@@ -10,10 +11,26 @@ interface LoginPageProps {
 
 function LoginPage({ onNext, onAgree }: LoginPageProps) {
     const [showConsent, setShowConsent] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleNext = () => {
         setShowConsent(true);
         onNext?.();
+    };
+
+    const handleAgree = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const result = await loginWithToss();
+            saveAuthToken(result);
+            onAgree?.();
+        } catch (e) {
+            setError("로그인에 실패했어요. 다시 시도해주세요.");
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -76,11 +93,23 @@ function LoginPage({ onNext, onAgree }: LoginPageProps) {
                                     <span className="lp-arrow">›</span>
                                 </div>
                             </div>
+
+                            {error && (
+                                <p className="lp-error">{error}</p>
+                            )}
                         </div>
 
                         <div className="lp-sheet-btn-box">
-                            <Button className="lp-agree-btn" onClick={onAgree}>동의하고 시작하기</Button>
-                            <button className="lp-later-btn">다음에</button>
+                            <Button
+                                className="lp-agree-btn"
+                                onClick={handleAgree}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? "로그인 중..." : "동의하고 시작하기"}
+                            </Button>
+                            <button className="lp-later-btn" onClick={() => setShowConsent(false)}>
+                                다음에
+                            </button>
                         </div>
                     </div>
                 </>
