@@ -26,11 +26,13 @@ function LoginPage({ onNext, onAgree }: LoginPageProps) {
             const result = await loginWithToss();
             saveAuthToken(result);
             onAgree?.();
+            console.log(sessionStorage);
         } catch (e) {
             setError("로그인에 실패했어요. 다시 시도해주세요.");
         } finally {
             setIsLoading(false);
         }
+
     };
 
     return (

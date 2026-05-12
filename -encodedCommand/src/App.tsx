@@ -1,11 +1,11 @@
-
 import { useEffect, useState } from "react";
 
 import GamePage from "./component/gamePage/tsx/gamePage.tsx";
 import LoginPage from "./component/loginPage/tsx/loginPage.tsx";
 import ResultPage from "./component/mainPage/tsx/resultPage.tsx";
 import StartPage from "./component/startPage/tsx/startPage.tsx";
-import { getAccountStorageKey, persistGetNumber, persistSetNumber } from "./lib/persist";
+import { getAccountStorageKey } from "./lib/persist";
+import { getPoints, addPoints } from "./lib/pointApi";
 
 function App() {
   const [screen, setScreen] = useState<"start" | "login" | "game" | "result">("start");
@@ -21,9 +21,12 @@ function App() {
       const key = await getAccountStorageKey();
       setAccountKey(key);
 
-      const savedPoints = (await persistGetNumber(`lucky-catch:points:${key}`)) ?? 0;
-      const savedBest = (await persistGetNumber(`lucky-catch:bestScore:${key}`)) ?? 0;
-      setPoints(savedPoints);
+      // 포인트 조회 API
+      const pointResult = await getPoints();
+      setPoints(pointResult.balance);
+
+      // 최고점수는 localStorage에서 가져오기
+      const savedBest = Number(localStorage.getItem(`lucky-catch:bestScore:${key}`) ?? 0);
       setBestScore(savedBest);
     })();
   }, []);
@@ -35,29 +38,23 @@ function App() {
       ) : screen === "game" ? (
         <GamePage
           onClose={() => setScreen("start")}
-          onFinish={(tapCount) => {
+          onFinish={async (tapCount) => {
             setLastTapCount(tapCount);
             const isNewBest = tapCount > bestScore;
             const earnedPointsThisGame = 1 + (isNewBest ? 3 : 0);
             setLastEarnedPoints(earnedPointsThisGame);
             setLastIsNewBest(isNewBest);
-            if (accountKey) {
-              // 게임 1회당 +1 포인트 적립
-              const nextPoints = points + 1;
-              setPoints(nextPoints);
-              void persistSetNumber(`lucky-catch:points:${accountKey}`, nextPoints);
 
-              // 최고 점수 갱신 시 추가 +3 포인트
-              if (isNewBest) {
-                const nextBest = tapCount;
-                setBestScore(nextBest);
-                void persistSetNumber(`lucky-catch:bestScore:${accountKey}`, nextBest);
+            // 포인트 적립 API 호출
+            const result = await addPoints(earnedPointsThisGame);
+            setPoints(result.balance);
 
-                const bonusPoints = nextPoints + 3;
-                setPoints(bonusPoints);
-                void persistSetNumber(`lucky-catch:points:${accountKey}`, bonusPoints);
-              }
+            // 최고점수 갱신
+            if (isNewBest && accountKey) {
+              setBestScore(tapCount);
+              localStorage.setItem(`lucky-catch:bestScore:${accountKey}`, String(tapCount));
             }
+
             setScreen("result");
           }}
         />
