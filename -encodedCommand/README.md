@@ -24,3 +24,9 @@ npm run deploy
 - [앱인토스 개발자 커뮤니티](https://techchat-apps-in-toss.toss.im/)
 
 AI를 사용하시는 경우 [여기](https://developers-apps-in-toss.toss.im/development/llms.html)를 확인해보세요.
+
+- vercel배포
+```bash
+npm install --save-dev @vercel/node --legacy-peer-deps
+vercel --prod
+```
