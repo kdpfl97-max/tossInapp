@@ -1,6 +1,6 @@
 import { Button, Top } from "@toss/tds-mobile";
-import "../scss/startPage.scss";
-import mainCatImage from "../../../img/mainCat.png";
+import { Image, Text, TouchableOpacity, View } from "react-native";
+import { styles } from "../styleSheet/startPage.styles";
 
 interface StartPageProps {
   onStart?: () => void;
@@ -8,59 +8,52 @@ interface StartPageProps {
 
 function StartPage({ onStart }: StartPageProps) {
   return (
-    <div className="sp-container">
-      <div className="sp-navbar">
-        <button className="sp-nav-btn sp-nav-btn--back" aria-label="뒤로가기">
-          ‹
-        </button>
-        <div className="sp-nav-title">
-          <span>🐱</span>
-          <span>궁디팡팡 고양이</span>
-        </div>
-        <div className="sp-nav-actions">
-          <button className="sp-nav-btn" aria-label="좋아요">
-            ♥
-          </button>
-          <button className="sp-nav-btn" aria-label="더보기">
-            ···
-          </button>
-          <div className="sp-nav-divider" aria-hidden="true" />
-          <button className="sp-nav-btn" aria-label="닫기">
-            ✕
-          </button>
-        </div>
-      </div>
+    <View style={styles.container}>
+      <View style={styles.navbar}>
+        <TouchableOpacity style={styles.navBtn}>
+          <Text style={styles.navBtnText}>‹</Text>
+        </TouchableOpacity>
+        <View style={styles.navTitle}>
+          <Text>🐱</Text>
+          <Text style={styles.navTitleText}>궁디팡팡 고양이</Text>
+        </View>
+        <View style={styles.navActions}>
+          <TouchableOpacity style={styles.navBtn}><Text style={styles.navBtnText}>♥</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn}><Text style={styles.navBtnText}>···</Text></TouchableOpacity>
+          <View style={styles.navDivider} />
+          <TouchableOpacity style={styles.navBtn}><Text style={styles.navBtnText}>✕</Text></TouchableOpacity>
+        </View>
+      </View>
 
-      <main className="sp-content">
+      <View style={styles.content}>
         <Top
           upperGap={16}
           lowerGap={0}
           title={
             <Top.TitleParagraph size={22}>
-              고양이가 궁디팡팡을{"\n"}기달리고 있어요
+              {"고양이가 궁디팡팡을\n기달리고 있어요"}
             </Top.TitleParagraph>
           }
         />
+        <View style={styles.imageBox}>
+          <Image
+            style={styles.centerImage}
+            source={require("../../../img/mainCat.png")}
+            resizeMode="contain"
+          />
+        </View>
+        <View style={styles.contextBox}>
+          <Text style={styles.subtitle}>빠르게 눌러서 최고 점수에 도전해요</Text>
+          <Text style={styles.context}>
+            최대한 빠르게 궁디팡팡 해주세요! 신기록을 세울수록 포인트를 더 받을 수 있어요.
+          </Text>
+        </View>
+      </View>
 
-        <div className="sp-spacer" aria-hidden="true">
-          <img className="sp-center-image" src={mainCatImage} alt="" />
-        </div>
-
-        <div className="sp-context-box">
-          <p className="sp-subtitle">빠르게 눌러서 최고 점수에 도전해요</p>
-          <p className="sp-context">
-            최대한 빠르게 궁디팡팡 해주세요! 신기록을 세울수록 포인트를 더 받을 수
-            있어요.
-          </p>
-        </div>
-      </main>
-
-      <div className="sp-btn-box">
-        <Button className="startButton" onClick={onStart}>
-          시작하기
-        </Button>
-      </div>
-    </div>
+      <View style={styles.btnBox}>
+        <Button onClick={onStart}>시작하기</Button>
+      </View>
+    </View>
   );
 }
 

@@ -5,17 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "granite dev",
-    "build": "ait build",
+    "build": "vite build",
+    "build:ait": "ait build",
     "deploy": "ait deploy",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "vercel-build": "npm install --legacy-peer-deps && vite build"
+    "vercel-build": "vite build"
   },
   "dependencies": {
     "@apps-in-toss/framework": "^2.4.7",
     "@apps-in-toss/web-framework": "^2.4.7",
     "@emotion/react": "^11.14.0",
     "@granite-js/react-native": "^1.0.23",
+    "@react-native-async-storage/async-storage": "^2.1.2",
     "@toss/tds-colors": "^0.1.0",
     "@toss/tds-mobile": "^2.3.0",
     "@toss/tds-mobile-ait": "^2.3.0",

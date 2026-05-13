@@ -1,2 +1,2 @@
 global.__granite = global.__granite || {};
-global.__granite.app = { name: "lucky-catch", scheme: "intoss", host: "" };
+global.__granite.app = { name: "pangpang-cat", scheme: "intoss", host: "" };

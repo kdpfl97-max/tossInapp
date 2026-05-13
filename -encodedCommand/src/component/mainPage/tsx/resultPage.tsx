@@ -1,7 +1,7 @@
 import { Button, Top } from "@toss/tds-mobile";
 import { useEffect, useRef } from "react";
-import "../scss/resultPage.scss";
-import doneCatImage from "../../../img/doneCat.png";
+import { Animated, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { styles } from "../styleSheet/resultPage.styles";
 
 interface ResultPageProps {
   tapCount: number;
@@ -14,116 +14,96 @@ interface ResultPageProps {
 }
 
 export default function ResultPage({
-                                     tapCount,
-                                     points,
-                                     bestScore,
-                                     earnedPoints,
-                                     isNewBest,
-                                     onRestart,
-                                     onClose,
-                                   }: ResultPageProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  tapCount, points, bestScore, earnedPoints, isNewBest, onRestart, onClose,
+}: ResultPageProps) {
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
   useEffect(() => {
-    const el = document.createElement("div");
-    el.className = `rp-point-toast ${isNewBest ? "rp-point-toast--best" : ""}`;
-    el.textContent = isNewBest ? "최고점수 달성기념 3포인트" : `${earnedPoints}포인트 받았어요.`;
-    document.body.appendChild(el);
-
-    const t = window.setTimeout(() => {
-      el.classList.add("rp-point-toast--hide");
-      window.setTimeout(() => el.remove(), 220);
-    }, 1500);
-
-    return () => {
-      window.clearTimeout(t);
-      el.remove();
-    };
-  }, [earnedPoints, isNewBest]);
+    Animated.spring(scaleAnim, {
+      toValue: 1, tension: 50, friction: 7, useNativeDriver: true,
+    }).start();
+  }, []);
 
   return (
-      <div className="rp-container">
-        <div className="rp-navbar">
-          <button className="rp-nav-btn rp-nav-btn--back" aria-label="뒤로가기" onClick={onClose}>
-            ‹
-          </button>
-
-          <div className="rp-nav-center">
-            <img
-                className="rp-app-icon"
-                src="https://static.toss.im/appsintoss/40719/e4bb596d-724a-4eac-a233-7dd810da4adc.png"
-                alt=""
-            />
-            <span className="rp-app-title">궁디팡팡 고양이</span>
-          </div>
-
-          <div className="rp-nav-actions" aria-label="상단 메뉴">
-            <button className="rp-nav-btn" aria-label="좋아요">♥</button>
-            <button className="rp-nav-btn" aria-label="더보기">···</button>
-            <div className="rp-nav-divider" aria-hidden="true" />
-            <button className="rp-nav-btn" aria-label="닫기" onClick={onClose}>✕</button>
-          </div>
-        </div>
-
-        <main className="rp-content">
-          <Top
-              upperGap={16}
-              lowerGap={8}
-              title={
-                <Top.TitleParagraph size={22}>
-                  {`5초 동안\n${tapCount}번 터치했어요`}
-                </Top.TitleParagraph>
-              }
+    <View style={styles.container}>
+      <View style={styles.navbar}>
+        <TouchableOpacity style={styles.navBtn} onPress={onClose}>
+          <Text style={styles.navBtnText}>‹</Text>
+        </TouchableOpacity>
+        <View style={styles.navCenter}>
+          <Image
+            source={{ uri: "https://static.toss.im/appsintoss/40719/e4bb596d-724a-4eac-a233-7dd810da4adc.png" }}
+            style={styles.appIcon}
           />
+          <Text style={styles.appTitle}>궁디팡팡 고양이</Text>
+        </View>
+        <View style={styles.navActions}>
+          <TouchableOpacity style={styles.navBtn}><Text style={styles.navBtnText}>♥</Text></TouchableOpacity>
+          <TouchableOpacity style={styles.navBtn}><Text style={styles.navBtnText}>···</Text></TouchableOpacity>
+          <View style={styles.navDivider} />
+          <TouchableOpacity style={styles.navBtn} onPress={onClose}>
+            <Text style={styles.navBtnText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-          <div className="rp-frame" ref={ref}>
-            <div className="rp-frame-inner">
-              <img className="rp-done-cat" src={doneCatImage} alt="완료 고양이" />
-            </div>
-          </div>
+      <ScrollView style={styles.content}>
+        <Top
+          upperGap={16}
+          lowerGap={8}
+          title={
+            <Top.TitleParagraph size={22}>
+              {`5초 동안\n${tapCount}번 터치했어요`}
+            </Top.TitleParagraph>
+          }
+        />
 
-          <div className="rp-spacer" aria-hidden="true" />
+        <Animated.View style={[styles.frame, { transform: [{ scale: scaleAnim }] }]}>
+          <Image
+            source={require("../../../img/doneCat.png")}
+            style={styles.doneCat}
+            resizeMode="contain"
+          />
+        </Animated.View>
 
-          <div className="rp-chip">
-            <div className="rp-chip-item">
-              <div className="rp-chip-left">
-                <span className="rp-chip-icon">❤️</span>
-                <span className="rp-chip-label">점수</span>
-                <span className="rp-chip-reddot" aria-label="새 업데이트 있음" />
-              </div>
-              <div className="rp-chip-right">{tapCount}</div>
-            </div>
+        {isNewBest && (
+          <View style={styles.toastBest}>
+            <Text style={styles.toastText}>최고점수 달성기념 3포인트</Text>
+          </View>
+        )}
 
-            <div className="rp-chip-divider" aria-hidden="true" />
+        <View style={styles.chip}>
+          <View style={styles.chipItem}>
+            <View style={styles.chipLeft}>
+              <Text style={styles.chipIcon}>❤️</Text>
+              <Text style={styles.chipLabel}>점수</Text>
+            </View>
+            <Text style={styles.chipValue}>{tapCount}</Text>
+          </View>
+          <View style={styles.chipDivider} />
+          <View style={styles.chipItem}>
+            <View style={styles.chipLeft}>
+              <Text style={styles.chipIconPoint}>P</Text>
+            </View>
+            <Text style={styles.chipValue}>{points}</Text>
+          </View>
+          <View style={styles.chipDivider} />
+          <View style={styles.chipItem}>
+            <View style={styles.chipLeft}>
+              <Image
+                source={{ uri: "https://static.toss.im/illusts/img-profile-01.png" }}
+                style={styles.chipAvatar}
+              />
+              <Text style={styles.chipLabel}>최고 점수</Text>
+            </View>
+            <Text style={styles.chipValue}>{bestScore}</Text>
+          </View>
+        </View>
+      </ScrollView>
 
-            <div className="rp-chip-item rp-chip-item--compact">
-              <div className="rp-chip-left">
-                <span className="rp-chip-icon rp-chip-icon--point">P</span>
-              </div>
-              <div className="rp-chip-right">{points}</div>
-            </div>
-
-            <div className="rp-chip-divider" aria-hidden="true" />
-
-            <div className="rp-chip-item">
-              <div className="rp-chip-left">
-                <img
-                    className="rp-chip-avatar"
-                    src="https://static.toss.im/illusts/img-profile-01.png"
-                    alt=""
-                />
-                <span className="rp-chip-label">최고 점수</span>
-              </div>
-              <div className="rp-chip-right">{bestScore}</div>
-            </div>
-          </div>
-        </main>
-
-        <div className="rp-bottom">
-          <Button className="rp-primary" onClick={onRestart}>
-            한번 더?
-          </Button>
-        </div>
-      </div>
+      <View style={styles.bottom}>
+        <Button onClick={onRestart}>한번 더?</Button>
+      </View>
+    </View>
   );
 }

@@ -1,17 +1,15 @@
-/**
- * 로그인된 유저의 accountKey를 반환
- * tossAuth에서 저장한 txId를 식별자로 사용
- * 없으면 guest 키 반환
- */
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export async function getAccountStorageKey(): Promise<string> {
-  const txId = sessionStorage.getItem("toss_txId");
+  const txId = await AsyncStorage.getItem("toss_txId");
   return txId ?? "guest";
 }
 
 export async function persistGetNumber(key: string): Promise<number> {
-  return Number(localStorage.getItem(key) ?? 0);
+  const val = await AsyncStorage.getItem(key);
+  return Number(val ?? 0);
 }
 
 export async function persistSetNumber(key: string, value: number): Promise<void> {
-  localStorage.setItem(key, String(value));
+  await AsyncStorage.setItem(key, String(value));
 }

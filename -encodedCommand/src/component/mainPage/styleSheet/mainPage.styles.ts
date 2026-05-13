@@ -1,0 +1,47 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff" },
+  navbar: {
+    flexDirection: "row", alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16, paddingVertical: 12,
+    borderBottomWidth: 1, borderBottomColor: "#f2f4f6",
+  },
+  navBtn: { padding: 8 },
+  navBtnText: { fontSize: 20, color: "#191f28" },
+  navTitle: { flexDirection: "row", alignItems: "center", gap: 6 },
+  navTitleText: { fontSize: 16, fontWeight: "600", color: "#191f28" },
+  navActions: { flexDirection: "row", alignItems: "center" },
+  content: { flex: 1, paddingHorizontal: 24 },
+  stats: {
+    flexDirection: "row", alignItems: "center",
+    borderRadius: 12, borderWidth: 1, borderColor: "#e5e8eb",
+    padding: 16, marginTop: 16,
+  },
+  statItem: { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 },
+  statIcon: { fontSize: 20 },
+  statIconPoint: {
+    fontSize: 13, fontWeight: "700", color: "#fff",
+    backgroundColor: "#3182f6", borderRadius: 10,
+    paddingHorizontal: 6, paddingVertical: 2,
+  },
+  statContent: { gap: 2 },
+  statLabel: { fontSize: 12, color: "#6b7684" },
+  statValue: { fontSize: 16, fontWeight: "700", color: "#191f28" },
+  statDivider: { width: 1, height: 32, backgroundColor: "#e5e8eb", marginHorizontal: 8 },
+  avatar: { width: 24, height: 24, borderRadius: 12, backgroundColor: "#e5e8eb" },
+  contextBox: { marginTop: 24 },
+  subtitle: { fontSize: 14, color: "#6b7684", marginBottom: 8 },
+  context: { fontSize: 14, color: "#6b7684", lineHeight: 20 },
+  actionBtns: { flexDirection: "row", gap: 12, marginTop: 24 },
+  actionBtn: {
+    flex: 1, flexDirection: "row", alignItems: "center",
+    justifyContent: "center", gap: 6,
+    paddingVertical: 12, borderRadius: 12,
+    borderWidth: 1, borderColor: "#e5e8eb",
+  },
+  actionBtnToss: { backgroundColor: "#3182f6", borderColor: "#3182f6" },
+  actionIcon: { fontSize: 16 },
+  btnBox: { padding: 16 },
+});

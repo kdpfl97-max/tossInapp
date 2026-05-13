@@ -1,11 +1,12 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
-
+import { StyleSheet, View } from "react-native";
 import GamePage from "./component/gamePage/tsx/gamePage.tsx";
 import LoginPage from "./component/loginPage/tsx/loginPage.tsx";
 import ResultPage from "./component/mainPage/tsx/resultPage.tsx";
 import StartPage from "./component/startPage/tsx/startPage.tsx";
 import { getAccountStorageKey } from "./lib/persist";
-import { getPoints, addPoints } from "./lib/pointApi";
+import { addPoints, getPoints } from "./lib/pointApi";
 
 function App() {
   const [screen, setScreen] = useState<"start" | "login" | "game" | "result">("start");
@@ -21,18 +22,16 @@ function App() {
       const key = await getAccountStorageKey();
       setAccountKey(key);
 
-      // 포인트 조회 API
       const pointResult = await getPoints();
       setPoints(pointResult.balance);
 
-      // 최고점수는 localStorage에서 가져오기
-      const savedBest = Number(localStorage.getItem(`lucky-catch:bestScore:${key}`) ?? 0);
-      setBestScore(savedBest);
+      const savedBest = await AsyncStorage.getItem(`lucky-catch:bestScore:${key}`);
+      setBestScore(Number(savedBest ?? 0));
     })();
   }, []);
 
   return (
-    <>
+    <View style={styles.root}>
       {screen === "start" ? (
         <StartPage onStart={() => setScreen("login")} />
       ) : screen === "game" ? (
@@ -45,14 +44,12 @@ function App() {
             setLastEarnedPoints(earnedPointsThisGame);
             setLastIsNewBest(isNewBest);
 
-            // 포인트 적립 API 호출
             const result = await addPoints(earnedPointsThisGame);
             setPoints(result.balance);
 
-            // 최고점수 갱신
             if (isNewBest && accountKey) {
               setBestScore(tapCount);
-              localStorage.setItem(`lucky-catch:bestScore:${accountKey}`, String(tapCount));
+              await AsyncStorage.setItem(`lucky-catch:bestScore:${accountKey}`, String(tapCount));
             }
 
             setScreen("result");
@@ -69,14 +66,14 @@ function App() {
           onRestart={() => setScreen("game")}
         />
       ) : (
-        <LoginPage
-          onAgree={() => {
-            setScreen("game");
-          }}
-        />
+        <LoginPage onAgree={() => setScreen("game")} />
       )}
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  root: { flex: 1 },
+});
 
 export default App;
