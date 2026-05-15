@@ -1,14 +1,14 @@
 import { AppsInToss } from '@apps-in-toss/framework';
-import { TDSProvider } from '@toss/tds-react-native';
+import { TDSMobileAITProvider } from '@toss/tds-mobile-ait';
 import { PropsWithChildren } from 'react';
 import { InitialProps } from '@granite-js/react-native';
 import { context } from './require.context';
 
 function AppContainer({ children }: PropsWithChildren<InitialProps>) {
   return (
-    <TDSProvider>
+    <TDSMobileAITProvider brandPrimaryColor="#3182F6">
       {children}
-    </TDSProvider>
+    </TDSMobileAITProvider>
   );
 }
 

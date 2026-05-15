@@ -12,12 +12,14 @@ interface GamePageProps {
 }
 
 const GAME_DURATION_MS = 5000;
+const FLIP_INTERVAL = 6; // 6번마다 좌우반전
 
 export default function GamePage({ onClose, onFinish }: GamePageProps) {
   const [status, setStatus] = useState<"ready" | "playing" | "finished">("ready");
   const [tapCount, setTapCount] = useState(0);
   const [remainingMs, setRemainingMs] = useState(GAME_DURATION_MS);
   const [tapped, setTapped] = useState(false);
+  const [flipped, setFlipped] = useState(false);
 
   const tapCountRef = useRef(0);
   const endAtRef = useRef<number | null>(null);
@@ -42,6 +44,7 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
     setTapCount(initialTapCount);
     setRemainingMs(GAME_DURATION_MS);
     setStatus("playing");
+    setFlipped(false);
     statusRef.current = "playing";
     endAtRef.current = Date.now() + GAME_DURATION_MS;
 
@@ -82,11 +85,21 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
       startGame(1);
       return;
     }
+
     tapCountRef.current += 1;
-    setTapCount(tapCountRef.current);
+    const newCount = tapCountRef.current;
+    setTapCount(newCount);
+
+    // 6번마다 좌우반전
+    if (newCount % FLIP_INTERVAL === 0) {
+      setFlipped(prev => !prev);
+    }
   }, [startGame]);
 
   const catImage = status === "ready" ? startCatImage : status === "playing" ? happyCatImage : goodCatImage;
+
+  // 게임 중 happyCat일 때만 반전 적용
+  const isFlipped = status === "playing" && flipped;
 
   return (
     <View style={styles.container}>
@@ -138,7 +151,11 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
         >
           <Image
             source={catImage}
-            style={[styles.catImage, tapped && styles.catImageTapped]}
+            style={[
+              styles.catImage,
+              tapped && styles.catImageTapped,
+              isFlipped && styles.catImageFlipped,
+            ]}
             resizeMode="contain"
           />
         </TouchableOpacity>

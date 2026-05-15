@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   navBtn: { padding: 8 },
   navBtnText: { fontSize: 20, color: "#191f28" },
-  navCenter: { flexDirection: "row", alignItems: "center", gap: 8 },
+  navCenter: { flexDirection: "row", alignItems: "center", gap: 6 },
   appIcon: { width: 24, height: 24, borderRadius: 6 },
   appTitle: { fontSize: 15, fontWeight: "600", color: "#191f28" } as any,
   navActions: { flexDirection: "row", alignItems: "center" },
@@ -31,37 +31,12 @@ export const styles = StyleSheet.create({
   } as any,
 
   content: { flex: 1, position: "relative" as any },
-
-  frame: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  doneCat: {
-    width: "100%" as any,
-    height: "100%" as any,
-  },
-
-  toastBest: {
-    position: "absolute" as any,
-    top: 12,
-    alignSelf: "center",
-    backgroundColor: "#3182f6",
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    zIndex: 10,
-  },
-  toastText: { color: "#fff", fontSize: 13, fontWeight: "600" } as any,
+  frame: { flex: 1, alignItems: "center", justifyContent: "center" },
+  doneCat: { width: "100%" as any, height: "100%" as any },
 
   chip: {
     position: "absolute" as any,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: 0, left: 0, right: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around",
@@ -71,9 +46,7 @@ export const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: "#f2f4f6",
   },
-  chipItem: {
-    flexDirection: "row", alignItems: "center", gap: 6,
-  },
+  chipItem: { flexDirection: "row", alignItems: "center", gap: 6 },
   chipLeft: { flexDirection: "row", alignItems: "center", gap: 6 },
   chipIcon: { fontSize: 16 },
   chipIconPoint: {

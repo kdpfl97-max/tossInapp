@@ -1,4 +1,5 @@
-import { Button } from "@toss/tds-mobile";
+import { Button, Toast, useToast } from "@toss/tds-mobile";
+import { useEffect } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styleSheet/resultPage.styles";
 import doneCatImage from "../../../img/doneCat.png";
@@ -16,8 +17,24 @@ interface ResultPageProps {
 export default function ResultPage({
   tapCount, points, bestScore, earnedPoints, isNewBest, onRestart, onClose,
 }: ResultPageProps) {
+  const toast = useToast();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isNewBest) {
+        toast.openToast("최고점수 달성기념 3포인트", { icon: "🏆" });
+      } else {
+        toast.openToast(`${earnedPoints}포인트 받았어요.`, { icon: "P" });
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <View style={styles.container}>
+      {/* 토스트 */}
+      <Toast />
+
       {/* 네비게이션 바 */}
       <View style={styles.navbar}>
         <TouchableOpacity style={styles.navBtn} onPress={onClose}>
@@ -40,29 +57,21 @@ export default function ResultPage({
         </View>
       </View>
 
-      {/* 타이틀 - 가운데 정렬 */}
+      {/* 타이틀 */}
       <View style={styles.titleArea}>
         <Text style={styles.titleText}>{`5초 동안\n${tapCount}번 터치했어요`}</Text>
       </View>
 
-      {/* 이미지 + 오버레이 영역 */}
+      {/* 이미지 + 오버레이 */}
       <View style={styles.content}>
-        {/* 고양이 이미지 */}
         <View style={styles.frame}>
           <Image
             source={doneCatImage}
             style={styles.doneCat}
             resizeMode="contain"
+            // @ts-ignore
+            className="scale-bounce-cat"
           />
-        </View>
-
-        {/* 포인트 토스트 */}
-        <View style={styles.toastBest}>
-          {isNewBest ? (
-            <Text style={styles.toastText}>🏆 최고점수 달성기념 3포인트</Text>
-          ) : (
-            <Text style={styles.toastText}>P {earnedPoints}원 받았어요.</Text>
-          )}
         </View>
 
         {/* 하단 점수 칩 */}
@@ -72,16 +81,12 @@ export default function ResultPage({
             <Text style={styles.chipLabel}>점수</Text>
             <Text style={styles.chipValue}>{tapCount}</Text>
           </View>
-
           <View style={styles.chipDivider} />
-
           <View style={styles.chipItem}>
             <Text style={styles.chipIconPoint}>P</Text>
             <Text style={styles.chipValue}>{points}</Text>
           </View>
-
           <View style={styles.chipDivider} />
-
           <View style={styles.chipItem}>
             <Image
               source={{ uri: "https://static.toss.im/illusts/img-profile-01.png" }}

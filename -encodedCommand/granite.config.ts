@@ -1,16 +1,9 @@
 import { appsInToss } from '@apps-in-toss/framework/plugins';
 import { defineConfig } from '@granite-js/react-native/config';
-import path from 'path';
 
 export default defineConfig({
   scheme: 'intoss',
   appName: 'pangpang-cat',
-  pages: [
-    {
-      name: 'ServiceEntry',
-      path: path.resolve(__dirname, 'src/_app.tsx').split(path.sep).join('/'),
-    },
-  ],
   plugins: [
     appsInToss({
       brand: {

@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   navBtn: { padding: 8 },
   navBtnText: { fontSize: 20, color: "#191f28" },
   navTitle: { flexDirection: "row", alignItems: "center", gap: 6 },
-  navTitleText: { fontSize: 16, fontWeight: "600", color: "#191f28" },
+  navTitleText: { fontSize: 16, fontWeight: "600", color: "#191f28" } as any,
   content: { flex: 1, paddingHorizontal: 24, paddingTop: 16 },
   stats: {
     flexDirection: "row", alignItems: "center",
@@ -22,16 +22,24 @@ export const styles = StyleSheet.create({
   statLabel: { fontSize: 13, color: "#6b7684", marginBottom: 4 },
   statValue: { fontSize: 22, fontWeight: "700", color: "#191f28" } as any,
   statDivider: { width: 1, height: 32, backgroundColor: "#e5e8eb" },
-  catButton: { flex: 1, alignItems: "center", justifyContent: "center" },
+  catButton: {
+    flex: 1,
+    marginHorizontal: -24, // 좌우 패딩 상쇄해서 꽉 채우기
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+  },
   catImage: {
     width: "100%" as any,
     height: "100%" as any,
-    maxHeight: 360,
-    transform: [{ scale: 1 }],
+    transform: [{ scale: 1 }, { scaleX: 1 }],
     transition: "transform 0.08s ease" as any,
   },
   catImageTapped: {
-    transform: [{ scale: 0.88 }],
+    transform: [{ scale: 0.93 }, { scaleX: 1 }],
+  },
+  catImageFlipped: {
+    transform: [{ scale: 1 }, { scaleX: -1 }],
   },
   bottom: { padding: 16, paddingBottom: 24 },
 });
