@@ -35,7 +35,10 @@ function App() {
       {screen === "start" ? (
         <StartPage onStart={() => setScreen("login")} />
       ) : screen === "login" ? (
-        <LoginPage onAgree={() => setScreen("game")} />
+        <LoginPage
+          onAgree={() => setScreen("game")}
+          onClose={() => setScreen("start")}  // 다음에 버튼 → start 페이지로
+        />
       ) : screen === "game" ? (
         <GamePage
           onClose={() => setScreen("start")}

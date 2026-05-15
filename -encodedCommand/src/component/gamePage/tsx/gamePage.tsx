@@ -1,6 +1,6 @@
 import { Button, Top } from "@toss/tds-mobile";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Text, TouchableOpacity, View } from "react-native";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styleSheet/gamePage.styles";
 import startCatImage from "../../../img/startCat.png";
 import happyCatImage from "../../../img/happyCat.png";
@@ -17,36 +17,32 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
   const [status, setStatus] = useState<"ready" | "playing" | "finished">("ready");
   const [tapCount, setTapCount] = useState(0);
   const [remainingMs, setRemainingMs] = useState(GAME_DURATION_MS);
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [tapped, setTapped] = useState(false);
 
   const tapCountRef = useRef(0);
   const endAtRef = useRef<number | null>(null);
-  const rafIdRef = useRef<any>(null);
-  const finishTimeoutRef = useRef<any>(null);
+  const rafIdRef = useRef<number | null>(null);
+  const finishTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const statusRef = useRef<"ready" | "playing" | "finished">("ready");
 
   const remainingSeconds = useMemo(() => Math.ceil(remainingMs / 1000), [remainingMs]);
 
-  const stopLoop = () => {
+  const stopLoop = useCallback(() => {
     if (rafIdRef.current != null) {
       cancelAnimationFrame(rafIdRef.current);
       rafIdRef.current = null;
     }
-  };
+  }, []);
 
-  const triggerTapEffect = () => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, { toValue: 0.9, duration: 70, useNativeDriver: true }),
-      Animated.timing(scaleAnim, { toValue: 1, duration: 70, useNativeDriver: true }),
-    ]).start();
-  };
-
-  const startGame = (initialTapCount: number) => {
+  const startGame = useCallback((initialTapCount: number) => {
     stopLoop();
     if (finishTimeoutRef.current) clearTimeout(finishTimeoutRef.current);
-    setTapCount(initialTapCount);
+
     tapCountRef.current = initialTapCount;
+    setTapCount(initialTapCount);
     setRemainingMs(GAME_DURATION_MS);
     setStatus("playing");
+    statusRef.current = "playing";
     endAtRef.current = Date.now() + GAME_DURATION_MS;
 
     const loop = () => {
@@ -56,32 +52,39 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
       setRemainingMs(msLeft);
       if (msLeft <= 0) {
         setStatus("finished");
+        statusRef.current = "finished";
         stopLoop();
         finishTimeoutRef.current = setTimeout(() => {
           onFinish?.(tapCountRef.current);
-        }, 900);
+        }, 600);
         return;
       }
       rafIdRef.current = requestAnimationFrame(loop);
     };
     rafIdRef.current = requestAnimationFrame(loop);
-  };
-
-  useEffect(() => { tapCountRef.current = tapCount; }, [tapCount]);
+  }, [stopLoop, onFinish]);
 
   useEffect(() => {
     return () => {
       stopLoop();
       if (finishTimeoutRef.current) clearTimeout(finishTimeoutRef.current);
     };
-  }, []);
+  }, [stopLoop]);
 
-  const handleTap = () => {
-    if (status === "ready") { startGame(1); triggerTapEffect(); return; }
-    if (status !== "playing") return;
-    setTapCount((prev) => prev + 1);
-    triggerTapEffect();
-  };
+  const handleTap = useCallback(() => {
+    if (statusRef.current === "finished") return;
+
+    // 탭 애니메이션 효과
+    setTapped(true);
+    setTimeout(() => setTapped(false), 100);
+
+    if (statusRef.current === "ready") {
+      startGame(1);
+      return;
+    }
+    tapCountRef.current += 1;
+    setTapCount(tapCountRef.current);
+  }, [startGame]);
 
   const catImage = status === "ready" ? startCatImage : status === "playing" ? happyCatImage : goodCatImage;
 
@@ -130,12 +133,12 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
         <TouchableOpacity
           onPress={handleTap}
           disabled={status === "finished"}
-          activeOpacity={0.9}
+          activeOpacity={1}
           style={styles.catButton}
         >
-          <Animated.Image
+          <Image
             source={catImage}
-            style={[styles.catImage, { transform: [{ scale: scaleAnim }] }]}
+            style={[styles.catImage, tapped && styles.catImageTapped]}
             resizeMode="contain"
           />
         </TouchableOpacity>

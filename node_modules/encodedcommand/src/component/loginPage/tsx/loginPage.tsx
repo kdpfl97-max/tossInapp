@@ -8,9 +8,10 @@ import cashCatImage from "../../../img/cashCat.png";
 interface LoginPageProps {
   onNext?: () => void;
   onAgree?: () => void;
+  onClose?: () => void;
 }
 
-function LoginPage({ onNext, onAgree }: LoginPageProps) {
+function LoginPage({ onNext, onAgree, onClose }: LoginPageProps) {
   const [showConsent, setShowConsent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,11 @@ function LoginPage({ onNext, onAgree }: LoginPageProps) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleLater = () => {
+    setShowConsent(false);
+    onClose?.(); // 메인(start) 페이지로 이동
   };
 
   return (
@@ -75,7 +81,7 @@ function LoginPage({ onNext, onAgree }: LoginPageProps) {
             <Button onClick={handleAgree} disabled={isLoading}>
               {isLoading ? "인증 중..." : "동의하고 시작하기"}
             </Button>
-            <TouchableOpacity onPress={() => setShowConsent(false)} style={styles.laterBtn}>
+            <TouchableOpacity onPress={handleLater} style={styles.laterBtn}>
               <Text style={styles.laterBtnText}>다음에</Text>
             </TouchableOpacity>
           </View>
