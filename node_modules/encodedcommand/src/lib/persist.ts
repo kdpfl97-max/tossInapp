@@ -1,8 +1,12 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+/**
+ * 로그인된 유저의 userKey를 반환
+ * 없으면 guest 키 반환
+ */
 export async function getAccountStorageKey(): Promise<string> {
-  const txId = await AsyncStorage.getItem("toss_txId");
-  return txId ?? "guest";
+  const userKey = sessionStorage.getItem('toss_user_key');
+  return userKey ?? 'guest';
 }
 
 export async function persistGetNumber(key: string): Promise<number> {

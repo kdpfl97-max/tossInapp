@@ -1,35 +1,33 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-const CLIENT_ID = process.env.TOSS_CLIENT_ID!;
-const CLIENT_SECRET = process.env.TOSS_CLIENT_SECRET!;
-const AUTH_BASE_URL = process.env.TOSS_AUTH_BASE_URL!;
+const BASE_URL = 'https://apps-in-toss-api.toss.im';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+  const { authorizationCode, referrer } = req.body;
+
+  if (!authorizationCode) {
+    return res.status(400).json({ error: 'authorizationCode가 필요해요' });
   }
 
   try {
-    const params = new URLSearchParams({
-      grant_type: 'client_credentials',
-      scope: 'ca',
-      client_id: CLIENT_ID,
-      client_secret: CLIENT_SECRET,
-    });
-
-    const response = await fetch(`${AUTH_BASE_URL}/token`, {
+    const response = await fetch(`${BASE_URL}/api-partner/v1/apps-in-toss/user/oauth2/generate-token`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString(),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        authorizationCode,
+        referrer: referrer ?? 'deeplink',
+      }),
     });
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({ error: data });
+    if (!response.ok || data.resultType !== 'SUCCESS') {
+      return res.status(response.status).json({ error: data.error ?? data });
     }
 
-    return res.status(200).json(data);
+    return res.status(200).json(data.success);
   } catch (error) {
     console.error('Token error:', error);
     return res.status(500).json({ error: '토큰 발급 실패' });

@@ -2,6 +2,9 @@ import { Button, Top } from "@toss/tds-mobile";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styleSheet/gamePage.styles";
+import startCatImage from "../../../img/startCat.png";
+import happyCatImage from "../../../img/happyCat.png";
+import goodCatImage from "../../../img/goodCat.png";
 
 interface GamePageProps {
   onClose?: () => void;
@@ -80,12 +83,7 @@ export default function GamePage({ onClose, onFinish }: GamePageProps) {
     triggerTapEffect();
   };
 
-  const catImage =
-    status === "ready"
-      ? require("../../../img/startCat.png")
-      : status === "playing"
-        ? require("../../../img/happyCat.png")
-        : require("../../../img/goodCat.png");
+  const catImage = status === "ready" ? startCatImage : status === "playing" ? happyCatImage : goodCatImage;
 
   return (
     <View style={styles.container}>

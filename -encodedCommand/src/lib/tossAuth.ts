@@ -1,101 +1,147 @@
-// 토스 인증 연동 (Vercel Serverless Functions 사용)
-import { appsInTossSignTossCert } from "@apps-in-toss/web-framework";
-
-let cachedToken: string | null = null;
-
-/**
- * 1단계: AccessToken 발급
- */
-async function getAccessToken(): Promise<string> {
-  if (cachedToken) return cachedToken;
-
-  const res = await fetch('/api/auth/token', { method: 'POST' });
-  if (!res.ok) throw new Error('토큰 발급 실패');
-
-  const data = await res.json();
-  cachedToken = data.access_token;
-  return cachedToken!;
+export interface TossUser {
+  userKey: number;
+  name?: string;
+  email?: string;
 }
 
-/**
- * 2단계: 인증 요청 → txId 받기
- */
-async function requestAuth(accessToken: string): Promise<string> {
-  const res = await fetch('/api/auth/request', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ accessToken }),
-  });
-
-  if (!res.ok) throw new Error('인증 요청 실패');
-
-  const data = await res.json();
-  if (data.resultType !== 'SUCCESS') throw new Error(data.error?.reason || '인증 요청 실패');
-
-  return data.success.txId;
+export interface AuthTokens {
+  accessToken: string;
+  refreshToken: string;
 }
 
+// 웹 환경인지 확인
+const isWebEnvironment = typeof window !== 'undefined' && !window.ReactNativeWebView;
+
 /**
- * 3단계: 인증 상태 폴링 (완료될 때까지 확인)
+ * 1단계: 토스앱 인증으로 authorizationCode 받기
+ * 웹 환경에서는 mock으로 처리
  */
-async function pollAuthStatus(accessToken: string, txId: string): Promise<boolean> {
-  const MAX_TRIES = 20;
-  const INTERVAL_MS = 3000;
-
-  for (let i = 0; i < MAX_TRIES; i++) {
-    await new Promise((r) => setTimeout(r, INTERVAL_MS));
-
-    const res = await fetch('/api/auth/status', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ accessToken, txId }),
-    });
-
-    const data = await res.json();
-
-    if (data.resultType === 'SUCCESS') {
-      const status = data.success.status;
-      if (status === 'COMPLETED') return true;
-      if (status === 'EXPIRED') throw new Error('인증 시간이 만료됐어요');
-    }
+async function getAuthorizationCode(): Promise<string> {
+  if (isWebEnvironment) {
+    // 웹 환경에서는 mock authorizationCode 반환
+    console.log('[TossAuth] 웹 환경 - mock authorizationCode 사용');
+    return 'mock-authorization-code-' + Date.now();
   }
 
-  throw new Error('인증 시간 초과');
+  // 실제 토스앱 환경
+  const { appsInTossSignTossCert } = await import('@apps-in-toss/web-framework');
+  return new Promise((resolve, reject) => {
+    appsInTossSignTossCert({
+      onSuccess: (result: any) => {
+        const code = result?.authorizationCode ?? result?.code;
+        if (code) resolve(code);
+        else reject(new Error('authorizationCode를 받지 못했어요'));
+      },
+      onFail: (error: any) => {
+        reject(new Error(error?.message ?? '토스 인증 실패'));
+      },
+    });
+  });
 }
 
 /**
- * 전체 토스 인증 플로우 실행
+ * 2단계: authorizationCode로 accessToken + refreshToken 발급
+ * 웹 환경에서는 mock 토큰 반환
  */
-export async function runTossAuth(): Promise<{ success: boolean; txId?: string }> {
+async function generateToken(authorizationCode: string): Promise<AuthTokens> {
+  if (isWebEnvironment || authorizationCode.startsWith('mock-')) {
+    // 웹 환경에서는 mock 토큰 반환
+    console.log('[TossAuth] 웹 환경 - mock 토큰 사용');
+    return {
+      accessToken: 'mock-access-token-' + Date.now(),
+      refreshToken: 'mock-refresh-token-' + Date.now(),
+    };
+  }
+
+  const res = await fetch('/api/auth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ authorizationCode }),
+  });
+
+  if (!res.ok) throw new Error('토큰 발급 실패');
+  return await res.json();
+}
+
+/**
+ * 3단계: accessToken으로 사용자 정보 조회
+ * 웹 환경에서는 mock 유저 반환
+ */
+export async function getMe(accessToken: string): Promise<TossUser> {
+  if (isWebEnvironment || accessToken.startsWith('mock-')) {
+    console.log('[TossAuth] 웹 환경 - mock 유저 사용');
+    return { userKey: 999999, name: '테스트 유저', email: 'test@toss.im' };
+  }
+
+  const res = await fetch('/api/auth/me', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!res.ok) throw new Error('사용자 정보 조회 실패');
+  return await res.json();
+}
+
+/**
+ * refreshToken으로 accessToken 재발급
+ */
+export async function refreshAccessToken(): Promise<string> {
+  const refreshToken = sessionStorage.getItem('toss_refresh_token');
+  if (!refreshToken) throw new Error('refreshToken이 없어요');
+
+  if (isWebEnvironment || refreshToken.startsWith('mock-')) {
+    const newToken = 'mock-access-token-' + Date.now();
+    sessionStorage.setItem('toss_access_token', newToken);
+    return newToken;
+  }
+
+  const res = await fetch('/api/auth/refresh', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (!res.ok) throw new Error('토큰 재발급 실패');
+  const data = await res.json();
+  sessionStorage.setItem('toss_access_token', data.accessToken);
+  return data.accessToken;
+}
+
+/**
+ * 전체 토스 로그인 플로우
+ */
+export async function runTossAuth(): Promise<{ success: boolean; user?: TossUser }> {
   try {
-    const accessToken = await getAccessToken();
-    const txId = await requestAuth(accessToken);
+    const authorizationCode = await getAuthorizationCode();
+    const tokens = await generateToken(authorizationCode);
 
-    // txId 저장
-    sessionStorage.setItem('toss_txId', txId);
-    sessionStorage.setItem('toss_access_token', accessToken);
+    sessionStorage.setItem('toss_access_token', tokens.accessToken);
+    sessionStorage.setItem('toss_refresh_token', tokens.refreshToken);
+    sessionStorage.setItem('toss_auth_done', 'true');
 
-    // ✅ 토스앱 인증 화면 호출 (SDK)
-    await appsInTossSignTossCert({ txId });
+    const user = await getMe(tokens.accessToken);
+    sessionStorage.setItem('toss_user_key', String(user.userKey));
 
-    // 인증 상태 폴링
-    const completed = await pollAuthStatus(accessToken, txId);
-
-    if (completed) {
-      sessionStorage.setItem('toss_auth_done', 'true');
-      return { success: true, txId };
-    }
-
-    return { success: false };
-  } catch (error) {
-    console.error('토스 인증 오류:', error);
+    return { success: true, user };
+  } catch (error: any) {
+    console.error('토스 로그인 오류:', error);
     throw error;
   }
 }
 
 /**
- * 인증 완료 여부 확인
+ * 로그인 완료 여부 확인
  */
 export function isTossAuthDone(): boolean {
   return sessionStorage.getItem('toss_auth_done') === 'true';
+}
+
+/**
+ * 저장된 accessToken 가져오기
+ */
+export function getAccessToken(): string | null {
+  return sessionStorage.getItem('toss_access_token');
 }

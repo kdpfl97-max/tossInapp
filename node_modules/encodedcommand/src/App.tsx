@@ -34,6 +34,8 @@ function App() {
     <View style={styles.root}>
       {screen === "start" ? (
         <StartPage onStart={() => setScreen("login")} />
+      ) : screen === "login" ? (
+        <LoginPage onAgree={() => setScreen("game")} />
       ) : screen === "game" ? (
         <GamePage
           onClose={() => setScreen("start")}
@@ -55,7 +57,7 @@ function App() {
             setScreen("result");
           }}
         />
-      ) : screen === "result" ? (
+      ) : (
         <ResultPage
           tapCount={lastTapCount}
           points={points}
@@ -65,15 +67,13 @@ function App() {
           onClose={() => setScreen("start")}
           onRestart={() => setScreen("game")}
         />
-      ) : (
-        <LoginPage onAgree={() => setScreen("game")} />
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, backgroundColor: "#fff" },
 });
 
 export default App;

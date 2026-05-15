@@ -1,6 +1,7 @@
 import { Button, Top } from "@toss/tds-mobile";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styleSheet/startPage.styles";
+import mainCatImage from "../../../img/mainCat.png";
 
 interface StartPageProps {
   onStart?: () => void;
@@ -38,7 +39,7 @@ function StartPage({ onStart }: StartPageProps) {
         <View style={styles.imageBox}>
           <Image
             style={styles.centerImage}
-            source={require("../../../img/mainCat.png")}
+            source={mainCatImage}
             resizeMode="contain"
           />
         </View>

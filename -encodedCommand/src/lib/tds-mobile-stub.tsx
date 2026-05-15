@@ -1,7 +1,5 @@
-// @toss/tds-mobile 웹 환경용 stub
-// 토스앱 외부(일반 브라우저, Vercel)에서 동작하도록 대체 구현
-
 import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Button 컴포넌트
 export function Button({
@@ -16,28 +14,18 @@ export function Button({
   className?: string;
 }) {
   return (
-    <button
-      onClick={onClick}
+    <TouchableOpacity
+      onPress={onClick}
       disabled={disabled}
-      className={className}
-      style={{
-        background: disabled ? "#ccc" : "#3182F6",
-        color: "#fff",
-        border: "none",
-        borderRadius: "12px",
-        padding: "16px",
-        fontSize: "17px",
-        fontWeight: 700,
-        width: "100%",
-        cursor: disabled ? "not-allowed" : "pointer",
-      }}
+      style={[styles.button, disabled && styles.buttonDisabled]}
+      activeOpacity={0.8}
     >
-      {children}
-    </button>
+      <Text style={styles.buttonText}>{children}</Text>
+    </TouchableOpacity>
   );
 }
 
-// Top 컴포넌트
+// Top.TitleParagraph
 function TitleParagraph({
   children,
   size = 20,
@@ -46,20 +34,13 @@ function TitleParagraph({
   size?: number;
 }) {
   return (
-    <p
-      style={{
-        fontSize: size,
-        fontWeight: 700,
-        whiteSpace: "pre-line",
-        margin: 0,
-        color: "#191F28",
-      }}
-    >
+    <Text style={[styles.titleParagraph, { fontSize: size }]}>
       {children}
-    </p>
+    </Text>
   );
 }
 
+// Top 컴포넌트
 export function Top({
   title,
   upperGap = 0,
@@ -70,9 +51,9 @@ export function Top({
   lowerGap?: number;
 }) {
   return (
-    <div style={{ paddingTop: upperGap, paddingBottom: lowerGap }}>
+    <View style={{ paddingTop: upperGap, paddingBottom: lowerGap }}>
       {title}
-    </div>
+    </View>
   );
 }
 
@@ -87,3 +68,27 @@ export function TDSMobileAITProvider({
 }) {
   return <>{children}</>;
 }
+
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: "#3182F6",
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+  },
+  buttonDisabled: {
+    backgroundColor: "#c2d4f8",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 17,
+    fontWeight: "700",
+  },
+  titleParagraph: {
+    fontWeight: "700",
+    color: "#191F28",
+    whiteSpace: "pre-line",
+  } as any,
+});

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { runTossAuth } from "../../../lib/tossAuth";
 import { styles } from "../styleSheet/loginPage.styles";
+import cashCatImage from "../../../img/cashCat.png";
 
 interface LoginPageProps {
   onNext?: () => void;
@@ -45,11 +46,9 @@ function LoginPage({ onNext, onAgree }: LoginPageProps) {
         <Text style={styles.title}>{"궁디팡팡 고양이에서\n토스로 로그인할까요?"}</Text>
       </View>
 
-      <Image
-        source={require("../../../img/cashCat.png")}
-        style={styles.img}
-        resizeMode="contain"
-      />
+      <View style={styles.imageBox}>
+        <Image source={cashCatImage} style={styles.img} resizeMode="contain" />
+      </View>
 
       <View style={styles.btnBox}>
         <Button onClick={handleNext}>다음</Button>

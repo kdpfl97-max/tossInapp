@@ -2,6 +2,7 @@ import { Button, Top } from "@toss/tds-mobile";
 import { useEffect, useRef } from "react";
 import { Animated, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "../styleSheet/resultPage.styles";
+import doneCatImage from "../../../img/doneCat.png";
 
 interface ResultPageProps {
   tapCount: number;
@@ -60,7 +61,7 @@ export default function ResultPage({
 
         <Animated.View style={[styles.frame, { transform: [{ scale: scaleAnim }] }]}>
           <Image
-            source={require("../../../img/doneCat.png")}
+            source={doneCatImage}
             style={styles.doneCat}
             resizeMode="contain"
           />
@@ -84,6 +85,7 @@ export default function ResultPage({
           <View style={styles.chipItem}>
             <View style={styles.chipLeft}>
               <Text style={styles.chipIconPoint}>P</Text>
+              <Text style={styles.chipLabel}>포인트</Text>
             </View>
             <Text style={styles.chipValue}>{points}</Text>
           </View>
